@@ -68,7 +68,7 @@ def reader(name: str):
 
 if __name__ == "__main__":
     init(False)
-    filename = "data/test/exp_3"
+    filename = "data/sitting/exp_10"
 
     processes = [
         threading.Thread(target=train, args=(filename,)),
