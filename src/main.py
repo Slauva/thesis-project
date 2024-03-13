@@ -1,12 +1,13 @@
-from serial.tools.list_ports import comports
-from time import perf_counter, sleep
-import serial
-import pandas as pd
 import json
 import threading
+from time import perf_counter, sleep
 
+import pandas as pd
+import serial
 from pydub import AudioSegment
 from pydub.playback import play
+from serial.tools.list_ports import comports
+
 
 def play_sound(pathname: str) -> None:
     audio = AudioSegment.from_mp3(pathname)
@@ -18,6 +19,7 @@ def init(rule=True):
     if rule:
         play_sound("src/assets/intro.mp3")
     sleep(0.3)
+
 
 def train(filename: str):
     points = dict()
@@ -31,7 +33,7 @@ def train(filename: str):
     for _ in range(3):
         points[f"close_{_}"] = perf_counter() - t0
         play_sound("src/assets/close.mp3")
-        sleep(2)    
+        sleep(2)
         points[f"open_{_}"] = perf_counter() - t0
         play_sound("src/assets/open.mp3")
         sleep(2)
@@ -40,6 +42,7 @@ def train(filename: str):
 
     with open(f"{filename}_points.json", "w") as f:
         json.dump(points, f)
+
 
 def reader(name: str):
     print("Start Recording")
@@ -53,10 +56,19 @@ def reader(name: str):
         try:
             while board.isOpen():
                 if board.inWaiting():
-                    pack = board.readline().decode("utf-8").strip().replace("\n", "")
                     try:
+                        pack = (
+                            board.readline().decode("utf-8").strip().replace("\n", "")
+                        )
                         sensor = json.loads(pack)
-                        data.append([perf_counter() - t0, int(sensor["emg1"]), int(sensor["emg2"]), int(sensor["emg3"])])
+                        data.append(
+                            [
+                                perf_counter() - t0,
+                                int(sensor["emg1"]),
+                                int(sensor["emg2"]),
+                                int(sensor["emg3"]),
+                            ]
+                        )
                     except ValueError:
                         pass
                 if perf_counter() - t0 >= 24:
@@ -72,11 +84,11 @@ if __name__ == "__main__":
 
     processes = [
         threading.Thread(target=train, args=(filename,)),
-        threading.Thread(target=reader, args=(filename,))
+        threading.Thread(target=reader, args=(filename,)),
     ]
 
     for p in processes:
         p.start()
-    
+
     for p in processes:
         p.join()
