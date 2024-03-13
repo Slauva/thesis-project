@@ -78,25 +78,10 @@ def reader(name: str):
             df = pd.DataFrame(data, columns=["time", "emg1", "emg2", "emg3"])
             df.to_csv(filename, index=False)
 
-            plt.figure(figsize=(18, 6))
-            plt.plot(df["time"], df["emg1"])
-            plt.grid(linestyle="--", linewidth=1, alpha=0.7)
-            plt.show()
-
-            plt.figure(figsize=(18, 6))
-            plt.plot(df["time"], df["emg2"])
-            plt.grid(linestyle="--", linewidth=1, alpha=0.7)
-            plt.show()
-
-            plt.figure(figsize=(18, 6))
-            plt.plot(df["time"], df["emg3"])
-            plt.grid(linestyle="--", linewidth=1, alpha=0.7)
-            plt.show()
-
 
 if __name__ == "__main__":
     init(False)
-    filename = "data/sitting/exp_10"
+    filename = "data/rest_time/10min/exp_5"
 
     processes = [
         threading.Thread(target=train, args=(filename,)),
