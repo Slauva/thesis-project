@@ -2,6 +2,7 @@ import json
 import threading
 from time import perf_counter, sleep
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import serial
 from pydub import AudioSegment
@@ -76,6 +77,21 @@ def reader(name: str):
         except KeyboardInterrupt:
             df = pd.DataFrame(data, columns=["time", "emg1", "emg2", "emg3"])
             df.to_csv(filename, index=False)
+
+            plt.figure(figsize=(18, 6))
+            plt.plot(df["time"], df["emg1"])
+            plt.grid(linestyle="--", linewidth=1, alpha=0.7)
+            plt.show()
+
+            plt.figure(figsize=(18, 6))
+            plt.plot(df["time"], df["emg2"])
+            plt.grid(linestyle="--", linewidth=1, alpha=0.7)
+            plt.show()
+
+            plt.figure(figsize=(18, 6))
+            plt.plot(df["time"], df["emg3"])
+            plt.grid(linestyle="--", linewidth=1, alpha=0.7)
+            plt.show()
 
 
 if __name__ == "__main__":
